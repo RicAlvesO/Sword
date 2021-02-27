@@ -26,32 +26,58 @@ void ler1()
     fscanf(f, "%[^\n]\n%[^\n]\n%i\n%i\n%i\n%i\n%i\n%i\n", stu_data.nome, stu_data.link, &stu_data.clg_data.dia,
                   &stu_data.clg_data.mes, &stu_data.clg_data.ano, &stu_data.diaSemana, &stu_data.horas, &stu_data.minutos) == 8;
 
-}
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+int abrirArquivo(char *palavra, int linha); //define apenas o cabeçalho da função. Sem o cabeçalho, a função deve ficar acima do main
 
 int main()
 {
-    ler1();
-    printf("%i\n", stu_data.minutos);
+    char palavraforca[50];
+    int linha, i;
+       scanf ("%d", &i);
+       linha=(1+i); //para nome do evento
+       abrirArquivo(palavraforca, linha);
+       printf("%s ", palavraforca);
+
+       linha=(7+i); //para hora do evento
+       abrirArquivo(palavraforca, linha);
+       printf("%s:", palavraforca);
+
+       linha=(8+i); //para minuto do evento
+       abrirArquivo(palavraforca, linha);
+       printf("%s ", palavraforca);
+
+       linha=(6+i); //para dia da semana do evento
+       abrirArquivo(palavraforca, linha);
+       printf("%s ", palavraforca);
+
+       linha=(3+i); //para nome do evento
+       abrirArquivo(palavraforca, linha);
+       printf("%s/", palavraforca);
+
+       linha=(4+i); //para pegar a palavra na segunda linha
+       abrirArquivo(palavraforca, linha);
+       printf("%s/", palavraforca);
+
+       linha=(5+i); //para pegar a palavra na terceira linha
+       abrirArquivo(palavraforca, linha);
+       printf("%s\n", palavraforca);
 
     return 0;
 }
 
-
-" %s", str
-
-
-
-
-
-int main()
+int abrirArquivo(char *palavra, int linha)
 {
-    int t;
-    printf ("Insira o nº a operação que pretende alterar: \n");
-    scanf ("%d", &t);
-    FILE * f= fopen("data.txt", "a");
-    fseek (f,t*sizeof (struct dadosUtilizador),SEEK_SET);
-    fread (&stu_data,sizeof(struct dadosUtilizador),1,f);
-    printf ("%s,%s,%d,%d,%d,%d,%d,%d;\n",stu_data.nome, stu_data.link, stu_data.clg_data.dia, stu_data.clg_data.mes, stu_data.clg_data.ano, stu_data.diaSemana, stu_data.horas, stu_data.minutos);
-    fclose (f);
-    return (0);
+    FILE *file;
+    file=fopen("ArqTeste.txt", "r");
+    int cont=0;
+    while(cont!=linha){
+        fscanf(file, "%s", palavra); //lê uma linha
+        cont++;
+    }
+
+    fclose(file);
+    return 0;
 }

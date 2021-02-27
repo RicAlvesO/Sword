@@ -56,7 +56,7 @@ void recolha(void)
         scanf("%d", &stu_data.horas);
         printf("Insira os minutos a que o evento vai ocorrer: \n");
         scanf("%d", &stu_data.minutos);
-        fprintf(ficheiro, "%s\n%s\n%d\n%d\n%d\n%d\n%d\n%d\n\n", stu_data.nome, stu_data.link, stu_data.clg_data.dia, stu_data.clg_data.mes, stu_data.clg_data.ano, stu_data.diaSemana, stu_data.horas, stu_data.minutos);
+        fprintf(ficheiro, "%s\n%s\n%d\n%d\n%d\n%d\n%d\n%d\n", stu_data.nome, stu_data.link, stu_data.clg_data.dia, stu_data.clg_data.mes, stu_data.clg_data.ano, stu_data.diaSemana, stu_data.horas, stu_data.minutos);
         printf("Caso deseje adicionar outro evento insira [1], ou [0] caso contrário.\n");
         scanf("%d", &i);
     }
@@ -72,32 +72,119 @@ void ler(void)
     fclose(f);
 }
 
-
-void removes (int del_line, int mode)
+void ler2(void)
 {
-    FILE *f1, *f2;
+    FILE *f = fopen("editar.txt", "r+");
+    fscanf(f, "%[^\n]\n%[^\n]\n%i\n%i\n%i\n%i\n%i\n%i\n", event.nome, event.link, &event.clg_data.dia,
+           &event.clg_data.mes, &event.clg_data.ano, &event.diaSemana, &event.horas, &event.minutos) == 8;
+    fclose(f);
+}
+
+void edit(void)
+{
+    int editarEv = 1; 
+    int aEd, t;
+    ler2();
+    FILE *ficheiro = fopen("copy.txt", "a");
+    while (editarEv!=0)
+    {
+        aEd = 0;
+        printf("\nO que pretende editar:\n1.Nome\n2.Link\n3.Data\n4.Horas\n");
+        scanf("%d", &aEd);
+        switch (aEd)
+        {
+        case 1:
+        {
+            printf("Insira o novo nome do evento: \n");
+            scanf("%s", event.nome);
+            break;
+        }
+        case 2:
+        {
+            printf("Insira o novo link do evento: \n");
+            scanf("%s", event.link);
+            break;
+        }
+        case 3:
+        {
+            printf("Caso deseje que seja recursivo insira [1], ou [0] caso contrário.\n");
+            scanf("%d", &t);
+            if (t == 0)
+            {
+                printf("Insira a nova data do evento: \n");
+                scanf("%d/%d/%d", &event.clg_data.dia, &event.clg_data.mes, &event.clg_data.ano);
+                event.diaSemana = 8;
+            }
+            else
+            {
+                printf("Insira o novo dia da semana em que o evento vai ocorrer: \n");
+                scanf("%d", &event.diaSemana);
+                event.clg_data.dia = (-1);
+                event.clg_data.mes = (-1);
+                event.clg_data.ano = (-1);
+            }
+            break;
+        }
+        case 4:
+        {
+            printf("Insira as novas horas a que o evento vai ocorrer: \n");
+            scanf("%d", &event.horas);
+            printf("Insira os minutos a que o evento vai ocorrer: \n");
+            scanf("%d", &event.minutos);
+            break;
+        }
+        default:
+        {
+            printf("Valor invalido! Por favor introduza um número válido!\n");
+            break;
+        }
+        }
+        
+        printf("Caso deseje editar mais algum argumento do evento escreva [1], ou [0] caso contrário.\n");
+        scanf("%d", &editarEv);
+    }
+    fprintf(ficheiro, "%s\n%s\n%d\n%d\n%d\n%d\n%d\n%d\n", event.nome, event.link, event.clg_data.dia, event.clg_data.mes, event.clg_data.ano, event.diaSemana, event.horas, event.minutos);
+    fclose(ficheiro);
+}
+
+void removes (int del_line,int mode)
+{
+    FILE *f1, *f2, *f3;
     int aux=1;
     char c;
+    int verf=0;
     f1=fopen("data.txt","r");
-    f2=fopen("copy.txt","w");
+    f2=fopen("copy.txt","a");
+    f3=fopen("editar.txt","w+");
     c = ' ';
-    while (c != EOF) {
-      c = getc(f1);
-      if (c == '\n')
-      aux++;
-      //except the line to be deleted
-      if ((9*del_line-8)>aux || aux > (9*del_line))
-      {
-        putc(c, f2);
-      }
-      else if (mode == 2)
-      {
-          edit();
-      }
+    while (c != EOF)
+    {
+        c = getc(f1);
+        if (c != EOF)
+        {
+            if ((8 * del_line - 7) > aux || aux > (8 * del_line))
+            {
+                putc(c, f2);
+            }
+            else
+            {
+                putc(c, f3);
+            }
+            if (c == '\n')
+            {
+                aux++;
+            }
+        }
     }
     fclose(f1);
     fclose(f2);
+    fclose(f3);
+    if (mode==2)
+    {
+        edit();
+    }
     remove("data.txt");
+    remove("editar.txt");
     rename("copy.txt","data.txt");
 }
 
@@ -110,13 +197,15 @@ void load_menu(void)
         //Variavel que permite escolher um numero de 1 a 5
         int choice;
         //Fazer enquato o numero 5 não for imprimido
-        printf("\n\n--------Menu---------\n\n");
-        printf("1.Visualizar Eventos\n");
-        printf("2.Criar Evento\n");
-        printf("3.Editar Evento\n");
-        printf("4.Apagar Evento\n");
-        printf("5.Exit\n\n");
-        printf("---------------------\n\n");
+        printf("\n             /\\\n            <  >\n             \\/\n             ||\n        <>========<>\n            |  |\n\\\\\\\\\\\\\\\\\\\\\\ Menu //////////\n");
+        printf("\\\\                       //\n");
+        printf("\\\\ 1.Visualizar Eventos  //\n");
+        printf("\\\\ 2.Criar Evento        //\n");
+        printf("\\\\ 3.Editar Evento       //\n");
+        printf("\\\\ 4.Apagar Evento       //\n");
+        printf("\\\\ 5.Exit                //\n");
+        printf("\\\\                       //\n");
+        printf("\\\\\\\\\\\\\\\\\\\\\\\\\\  ////////////\n             \\/\n");
 
         //Escrever a ação que pretendemos
         assert(scanf("%d", &choice) == 1);
@@ -138,7 +227,9 @@ void load_menu(void)
         //Edição de Eventos
         case 3:
         {
-            /* code */
+            printf("\nQual evento a editar?\n");
+            scanf("%d", &del);
+            removes(del, 2);
             break;
         }
         //Apagar Eventos
@@ -172,3 +263,6 @@ int main()
     load_menu();
     return 0;
 }
+
+
+
