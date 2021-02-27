@@ -22,6 +22,158 @@ struct dadosUtilizador event;
 // Para usar, por exemplo a variável diaSemana, tem de se representar por stu_data.diaSemana
 // Para usar a variável dia, tem de se representar por stu_data.clg_data.dia
 
+int mostra(void)
+{
+    int line = 1;
+    int i = 0;
+    char c = ' ';
+    int eve = 1;
+
+    FILE *fd = fopen("data.txt", "r");
+
+    if (fd == NULL)
+    {
+        printf("Failed to open file\n");
+        return -1;
+    }
+
+    printf("\nEvento %d\n", eve);
+    while (c != EOF)
+    {
+        c = getc(fd);
+        if (c != EOF)
+        {
+            if ((line - 2) % 7 == 0 && i > 2)
+            {
+                line = 1;
+                i = 0;
+                eve++;
+                printf("\nEvento %d\n", eve);
+            }
+
+            if (line == 3 && c == '-')
+            {
+                i = 4;
+                printf("Dia da Semana: ");
+            }
+            else if (line == 3 && i == 1)
+            {
+                i = 5;
+                printf("Data: ");
+            }
+
+            if (line == 7 && i > 3)
+            {
+                i = 1;
+            }
+
+            if (line == 1 && i == 0) //Insere o nome do eventos guardado
+            {
+                printf("Nome: ");
+                putchar(c);
+                i++;
+            }
+            else if (line == 1 && i != 0) //Nome
+            {
+                putchar(c);
+            }
+            else if (line == 3 && i != 4 && c != '\n') //Insere o nome do eventos guardado
+            {
+                putchar(c);
+            }
+            else if (line == 4 && i == 5) //Nome
+            {
+                putchar('/');
+                putchar(c);
+                i++;
+            }
+            else if (line == 4 && i > 5 && c != '\n') //Insere o nome do eventos guardado
+            {
+                putchar(c);
+            }
+            else if (line == 5 && i == 6) //Nome
+            {
+                putchar('/');
+                putchar(c);
+                i++;
+            }
+            else if (line == 5 && i > 6) //Insere o nome do eventos guardado
+            {
+                putchar(c);
+            }
+            else if (line == 6 && i == 4) //Insere o nome do eventos guardado
+            {
+                switch (c)
+                {
+                case '0':
+                {
+                    printf("Domingo\n");
+                    break;
+                }
+                case '1':
+                {
+                    printf("Segunda\n");
+                    break;
+                }
+                case '2':
+                {
+                    printf("Terça\n");
+                    break;
+                }
+                case '3':
+                {
+                    printf("Quarta\n");
+                    break;
+                }
+                case '4':
+                {
+                    printf("Quinta\n");
+                    break;
+                }
+                case '5':
+                {
+                    printf("Sexta\n");
+                    break;
+                }
+                case '6':
+                {
+                    printf("Sábado\n");
+                    break;
+                }
+                default:
+                    break;
+                }
+            }
+            else if (line == 7 && i == 1) // Insere a data do evento guardado no ficheiro
+            {
+                printf("Hora: ");
+                putchar(c);
+                i++;
+            }
+            else if (line == 7 && i != 1 && c != '\n') // Insere a hora do evento guardado no ficheiro
+            {
+                putchar(c);
+            }
+            else if (line == 8 && i == 2) // Insere o minuto do evento guardado no ficheiro
+            {
+                putchar(':');
+                putchar(c);
+                i++;
+            }
+            else if (line == 8 && i != 2)
+            {
+                putchar(c);
+            }
+
+            if (c == '\n')
+            {
+                line++;
+            }
+        }
+    }
+    return 0;
+}
+
 //recolha das informações
 void recolha(void)
 {
@@ -32,32 +184,30 @@ void recolha(void)
 
     while (i == 1)
     {
-        printf("Insira o nome do evento: \n");
+        printf("\nInsira o nome do evento: ");
         scanf("%s", stu_data.nome);
-        printf("Insira o link do evento: \n");
+        printf("Insira o link do evento: ");
         scanf("%s", stu_data.link);
-        printf("Caso deseje que seja recursivo insira [1], ou [0] caso contrário.\n");
+        printf("Caso deseje que seja recursivo insira [1], ou [0] caso contrário: ");
         scanf("%d", &t);
         if (t==0)
         {
-        printf("Insira a data do evento: \n");
+        printf("Insira a data do evento: ");
         scanf("%d/%d/%d", &stu_data.clg_data.dia, &stu_data.clg_data.mes, &stu_data.clg_data.ano);
         stu_data.diaSemana=8;
         }
         else
         {
-        printf("Insira dia da semana em que o evento vai ocorrer: \n");
+        printf("Insira dia da semana em que o evento vai ocorrer: ");
         scanf("%d", &stu_data.diaSemana);
         stu_data.clg_data.dia = (-1);
         stu_data.clg_data.mes = (-1);
         stu_data.clg_data.ano = (-1);
         }
-        printf("Insira a que horas o evento vai ocorrer: \n");
-        scanf("%d", &stu_data.horas);
-        printf("Insira os minutos a que o evento vai ocorrer: \n");
-        scanf("%d", &stu_data.minutos);
+        printf("Insira a que horas o evento vai ocorrer: ");
+        scanf("%d:%d", &stu_data.horas, &stu_data.minutos);
         fprintf(ficheiro, "%s\n%s\n%d\n%d\n%d\n%d\n%d\n%d\n", stu_data.nome, stu_data.link, stu_data.clg_data.dia, stu_data.clg_data.mes, stu_data.clg_data.ano, stu_data.diaSemana, stu_data.horas, stu_data.minutos);
-        printf("Caso deseje adicionar outro evento insira [1], ou [0] caso contrário.\n");
+        printf("\nCaso deseje adicionar outro evento insira [1], ou [0] caso contrário: ");
         scanf("%d", &i);
     }
 
@@ -85,9 +235,10 @@ void edit(void)
     int editarEv = 1; 
     int aEd, t;
     ler2();
-    FILE *ficheiro = fopen("copy.txt", "a");
+    FILE *ficheiro; 
     while (editarEv!=0)
     {
+        ficheiro = fopen("copy.txt", "a");
         aEd = 0;
         printf("\nO que pretende editar:\n1.Nome\n2.Link\n3.Data\n4.Horas\n");
         scanf("%d", &aEd);
@@ -142,9 +293,9 @@ void edit(void)
         
         printf("Caso deseje editar mais algum argumento do evento escreva [1], ou [0] caso contrário.\n");
         scanf("%d", &editarEv);
+        fprintf(ficheiro, "%s\n%s\n%d\n%d\n%d\n%d\n%d\n%d\n", event.nome, event.link, event.clg_data.dia, event.clg_data.mes, event.clg_data.ano, event.diaSemana, event.horas, event.minutos);
+        fclose(ficheiro);
     }
-    fprintf(ficheiro, "%s\n%s\n%d\n%d\n%d\n%d\n%d\n%d\n", event.nome, event.link, event.clg_data.dia, event.clg_data.mes, event.clg_data.ano, event.diaSemana, event.horas, event.minutos);
-    fclose(ficheiro);
 }
 
 void removes (int del_line,int mode)
@@ -199,13 +350,18 @@ void load_menu(void)
         //Fazer enquato o numero 5 não for imprimido
         printf("\n             /\\\n            <  >\n             \\/\n             ||\n        <>========<>\n            |  |\n\\\\\\\\\\\\\\\\\\\\\\ Menu //////////\n");
         printf("\\\\                       //\n");
-        printf("\\\\ 1.Visualizar Eventos  //\n");
-        printf("\\\\ 2.Criar Evento        //\n");
-        printf("\\\\ 3.Editar Evento       //\n");
-        printf("\\\\ 4.Apagar Evento       //\n");
-        printf("\\\\ 5.Exit                //\n");
+        printf("\\\\ 1. Visualizar Eventos //\n");
+        printf("\\\\ 2. Criar Evento       //\n");
+        printf("\\\\ 3. Editar Evento      //\n");
+        printf("\\\\ 4. Apagar Evento      //\n");
+        printf("\\\\ 5. Exit               //\n");
         printf("\\\\                       //\n");
-        printf("\\\\\\\\\\\\\\\\\\\\\\\\\\  ////////////\n             \\/\n");
+        printf("\\\\          oOOo         //\n");
+        printf("\\\\         c~~~~ɔ        //\n");
+        printf("\\\\         \\\\\\///        //\n");
+        printf("\\\\          ----         //\n");
+        printf("\\\\                       //\n");
+        printf("\\\\\\\\\\\\\\\\\\\\\\\\\\\\/////////////\n            |  |\n            \\  /\n             \\/\n\n             ");
 
         //Escrever a ação que pretendemos
         assert(scanf("%d", &choice) == 1);
@@ -215,7 +371,7 @@ void load_menu(void)
         //Visualização de Eventos
         case 1:
         {
-            /* code */
+            mostra();
             break;
         }
         // Criação de Eventos
@@ -227,7 +383,8 @@ void load_menu(void)
         //Edição de Eventos
         case 3:
         {
-            printf("\nQual evento a editar?\n");
+            mostra();
+            printf("\n\nQual evento a editar?\n");
             scanf("%d", &del);
             removes(del, 2);
             break;
@@ -235,7 +392,8 @@ void load_menu(void)
         //Apagar Eventos
         case 4:
         {
-            printf("Qual evento a apagar?");
+            mostra();
+            printf("\n\nQual evento a apagar?\n");
             scanf("%d", &del);
             removes(del, 1);
             break;
@@ -243,14 +401,14 @@ void load_menu(void)
         //Exit
         case 5:
         {
-            printf("Bye bye\n");
+            printf("\n\nBye bye\n");
             menu = 0;
             break;
         }
         // Caso o valor dado seja Invalido
         default:
         {
-            printf("Valor invalido! Por favor introduza um número válido\n");
+            printf("\n\nValor invalido! Por favor introduza um número válido\n");
             break;
         }
         }

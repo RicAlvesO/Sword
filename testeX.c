@@ -1,83 +1,165 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-struct dataExec
-{
-    int dia;
-    int mes;
-    int ano;
-};
 
-struct dadosUtilizador
-{
-    char nome[30];            // guarda o nome atribuido pelo utilizador à ação desejada
-    char link[100];           // guarda o link do site fornecido pelo utilizador
-    struct dataExec clg_data; // guarda a data desejada pelo utilizador para a execução da tarefa
-    int diaSemana;            // guarda o dia da semana em que o utilizador deseja executar a tarefa
-    int horas;                // guarda as horas fornecidas pelo utilizador
-    int minutos;              // guarda os minutos fornecidos pelo utilizador
-} stu_data;
+int mostra(void){
+    int line=1;
+    int i=0;
+    char c=' ';
+    int eve=1;
 
-void ler1()
-{
-    FILE *f = fopen("data.txt", "r+");
-    struct dadosUtilizador testtop;
-    fscanf(f, "%[^\n]\n%[^\n]\n%i\n%i\n%i\n%i\n%i\n%i\n", stu_data.nome, stu_data.link, &stu_data.clg_data.dia,
-                  &stu_data.clg_data.mes, &stu_data.clg_data.ano, &stu_data.diaSemana, &stu_data.horas, &stu_data.minutos) == 8;
+    FILE *fd = fopen("data.txt", "r");
+    
+    if (fd == NULL) 
+    {
+        printf("Failed to open file\n");
+        return -1;
+    }
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+    printf("\nEvento %d\n", eve);
+    while (c != EOF)
+    {
+        c = getc(fd);
+        if (c != EOF)
+        {
+            if ((line-2)%7==0 && i>2)
+            {
+                line=1;
+                i=0;
+                eve++;
+                printf("\nEvento %d\n",eve);
+            }
 
-int abrirArquivo(char *palavra, int linha); //define apenas o cabeçalho da função. Sem o cabeçalho, a função deve ficar acima do main
 
-int main()
-{
-    char palavraforca[50];
-    int linha, i;
-       scanf ("%d", &i);
-       linha=(1+i); //para nome do evento
-       abrirArquivo(palavraforca, linha);
-       printf("%s ", palavraforca);
+            if (line == 3 && c == '-')
+            {
+                i = 4;
+                printf("Dia da Semana: ");
+            }
+            else if (line == 3 && i==1)
+            {
+                i = 5;
+                printf("Data: ");
+            }
 
-       linha=(7+i); //para hora do evento
-       abrirArquivo(palavraforca, linha);
-       printf("%s:", palavraforca);
+            if (line == 7 && i > 3)
+            {
+                i = 1;
+            }
 
-       linha=(8+i); //para minuto do evento
-       abrirArquivo(palavraforca, linha);
-       printf("%s ", palavraforca);
+            if (line==1 && i==0) //Insere o nome do eventos guardado
+            {
+                printf("Nome: ");
+                putchar(c);
+                i++;
+            }
+            else if (line==1 && i!=0) //Nome 
+            {
+                putchar(c);
+            }
+            else if (line == 3 && i != 4 && c != '\n') //Insere o nome do eventos guardado
+            {
+                putchar(c);
+            }
+            else if (line == 4 && i == 5) //Nome
+            {
+                putchar('/');
+                putchar(c);
+                i++;
+            }
+            else if (line == 4 && i > 5 && c != '\n') //Insere o nome do eventos guardado
+            {
+                putchar(c);
+            }
+            else if (line == 5 && i == 6) //Nome
+            {
+                putchar('/');
+                putchar(c);
+                i++;
+            }
+            else if (line == 5 && i > 6) //Insere o nome do eventos guardado
+            {
+                putchar(c);
+            }
+            else if (line == 6 && i == 4) //Insere o nome do eventos guardado
+            {
+                switch (c)
+                {
+                    case '0':
+                        {
+                        printf("Domingo\n");
+                        break;
+                        }
+                    case '1':
+                        {
+                        printf("Segunda\n");
+                        break;
+                        }
+                    case '2':
+                        {
+                        printf("Terça\n");
+                        break;
+                        }
+                    case '3':
+                        {
+                        printf("Quarta\n");
+                        break;
+                        }
+                    case '4':
+                        {
+                        printf("Quinta\n");
+                        break;
+                        }
+                    case '5':
+                        {
+                        printf("Sexta\n");
+                        break;
+                        }
+                    case '6':
+                        {
+                        printf("Sábado\n");
+                        break;
+                        }
+                    default:
+                        break;
+                }
+            }
+            else if (line==7 && i==1) // Insere a data do evento guardado no ficheiro
+            {
+                printf("Hora: ");
+                putchar(c);
+                i++;
+            }
+            else if (line==7 && i!=1 && c!='\n') // Insere a hora do evento guardado no ficheiro
+            {
+                putchar(c);
+            }
+            else if (line==8 && i==2) // Insere o minuto do evento guardado no ficheiro
+            {
+                putchar(':');
+                putchar(c);
+                i++;
+            }
+            else if (line==8 && i!=2) 
+            {
+                putchar(c);
+            }
 
-       linha=(6+i); //para dia da semana do evento
-       abrirArquivo(palavraforca, linha);
-       printf("%s ", palavraforca);
-
-       linha=(3+i); //para nome do evento
-       abrirArquivo(palavraforca, linha);
-       printf("%s/", palavraforca);
-
-       linha=(4+i); //para pegar a palavra na segunda linha
-       abrirArquivo(palavraforca, linha);
-       printf("%s/", palavraforca);
-
-       linha=(5+i); //para pegar a palavra na terceira linha
-       abrirArquivo(palavraforca, linha);
-       printf("%s\n", palavraforca);
-
+            if (c == '\n')
+            {
+                line++;
+            }
+        }
+    }
     return 0;
 }
 
-int abrirArquivo(char *palavra, int linha)
-{
-    FILE *file;
-    file=fopen("ArqTeste.txt", "r");
-    int cont=0;
-    while(cont!=linha){
-        fscanf(file, "%s", palavra); //lê uma linha
-        cont++;
-    }
 
-    fclose(file);
+
+int main ()
+{
+    mostra();
+
     return 0;
 }
