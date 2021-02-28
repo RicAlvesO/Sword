@@ -3,9 +3,9 @@
 
 ### <p>A aplicação que te ajuda a numca chegar atrasdo aos teus compromissos online!</p>
 
-A Sword surgiu de uma necessidade de um pequeno grupo de 4 alunos de engenharia informática da Universidade do Minho, que com a pandemia de COVID-19 se viu com a necessdidade da existeência de uma ferramenta que auxiliasse na participação de aulas online, evitando assim uma constantemente consulta do horário e das diversas plataformas usadas pelos professores para lecionar as aulas.
+A Sword surgiu de uma necessidade de um pequeno grupo de 4 alunos de engenharia informática da Universidade do Minho, que com a pandemia de COVID-19 e motivados pelo desafio da SEI'21, se deparou ccom a oportunidade de uma ferramenta que auxiliasse na participação de aulas online, trabalhos em grupo, palestras(,etc...) evitando assim a constante consulta do horários, a procura de links, ou até a inconveniência do constante multitasking entre aplicações e plataformas usadas para aulas, trabalhos e afins.
 
-Assim sendo, a Sword foi criada abrangendo não só as necessidsades de estes 4 alunos, bem como foi desenvolvida a possibilidade de ser utilizada em outros contextos.
+Assim sendo, a Sword foi criada abrangendo não só as necessidsades de estes 4 alunos, mas também com vista na possibilidade de ser utilizada em outros contextos por utilizadores de todas as áreas, quer de estudo ou trabalho.
 
 ![Screenshot](unknown.png)
 
