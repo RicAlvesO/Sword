@@ -20,10 +20,10 @@ Este programa foi feito com recurso à linguagem C e é exclusivamente operado p
 Tendo em conta os pontos acima e o empenho dos seus criadores, chegamos a um resultado satisfatório onde disponibilizamos agora esta ferramenta para que possa ser utilizada por todos para melhorar a sua produtividade no deu dia-dia.
 
 ### Realizado por:  
-- João Faria  
-- Ricardo Oliveira  
-- Ricardo Sousa  
-- Rodrigo Freitas  
+- João Faria        <joaofaria.dias04@gmail.com>
+- Ricardo Oliveira  <ricaoimp@gmail.com>
+- Ricardo Sousa     <ricardo16464@agv.edu.pt>
+- Rodrigo Freitas   <rodrigo-jose-@hotmail.com>
 
 # SEI'21
 # Hackathon
