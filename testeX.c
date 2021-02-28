@@ -1,165 +1,99 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
-
-int mostra(void){
-    int line=1;
-    int i=0;
-    char c=' ';
-    int eve=1;
-
-    FILE *fd = fopen("data.txt", "r");
-    
-    if (fd == NULL) 
-    {
-        printf("Failed to open file\n");
-        return -1;
-    }
-
-    printf("\nEvento %d\n", eve);
+void removes(int del_line, int mode)
+{
+    FILE *f1, *f2, *f3;
+    int aux = 1;
+    char c;
+    int verf = 0;
+    f1 = fopen("data.txt", "r");
+    f2 = fopen("copy.txt", "a");
+    f3 = fopen("editar.txt", "w+");
+    c = ' ';
     while (c != EOF)
     {
-        c = getc(fd);
+        c = getc(f1);
         if (c != EOF)
         {
-            if ((line-2)%7==0 && i>2)
+            if ((8 * del_line - 7) > aux || aux > (8 * del_line))
             {
-                line=1;
-                i=0;
-                eve++;
-                printf("\nEvento %d\n",eve);
+                putc(c, f2);
             }
-
-
-            if (line == 3 && c == '-')
+            else
             {
-                i = 4;
-                printf("Dia da Semana: ");
+                putc(c, f3);
             }
-            else if (line == 3 && i==1)
-            {
-                i = 5;
-                printf("Data: ");
-            }
-
-            if (line == 7 && i > 3)
-            {
-                i = 1;
-            }
-
-            if (line==1 && i==0) //Insere o nome do eventos guardado
-            {
-                printf("Nome: ");
-                putchar(c);
-                i++;
-            }
-            else if (line==1 && i!=0) //Nome 
-            {
-                putchar(c);
-            }
-            else if (line == 3 && i != 4 && c != '\n') //Insere o nome do eventos guardado
-            {
-                putchar(c);
-            }
-            else if (line == 4 && i == 5) //Nome
-            {
-                putchar('/');
-                putchar(c);
-                i++;
-            }
-            else if (line == 4 && i > 5 && c != '\n') //Insere o nome do eventos guardado
-            {
-                putchar(c);
-            }
-            else if (line == 5 && i == 6) //Nome
-            {
-                putchar('/');
-                putchar(c);
-                i++;
-            }
-            else if (line == 5 && i > 6) //Insere o nome do eventos guardado
-            {
-                putchar(c);
-            }
-            else if (line == 6 && i == 4) //Insere o nome do eventos guardado
-            {
-                switch (c)
-                {
-                    case '0':
-                        {
-                        printf("Domingo\n");
-                        break;
-                        }
-                    case '1':
-                        {
-                        printf("Segunda\n");
-                        break;
-                        }
-                    case '2':
-                        {
-                        printf("Terça\n");
-                        break;
-                        }
-                    case '3':
-                        {
-                        printf("Quarta\n");
-                        break;
-                        }
-                    case '4':
-                        {
-                        printf("Quinta\n");
-                        break;
-                        }
-                    case '5':
-                        {
-                        printf("Sexta\n");
-                        break;
-                        }
-                    case '6':
-                        {
-                        printf("Sábado\n");
-                        break;
-                        }
-                    default:
-                        break;
-                }
-            }
-            else if (line==7 && i==1) // Insere a data do evento guardado no ficheiro
-            {
-                printf("Hora: ");
-                putchar(c);
-                i++;
-            }
-            else if (line==7 && i!=1 && c!='\n') // Insere a hora do evento guardado no ficheiro
-            {
-                putchar(c);
-            }
-            else if (line==8 && i==2) // Insere o minuto do evento guardado no ficheiro
-            {
-                putchar(':');
-                putchar(c);
-                i++;
-            }
-            else if (line==8 && i!=2) 
-            {
-                putchar(c);
-            }
-
             if (c == '\n')
             {
-                line++;
+                aux++;
             }
         }
     }
-    return 0;
+    fclose(f1);
+    fclose(f2);
+    fclose(f3);
+    if (mode == 2)
+    {
+        edit();
+    }
+    remove("data.txt");
+    remove("editar.txt");
+    rename("copy.txt", "data.txt");
 }
 
-
-
-int main ()
+int main()
 {
-    mostra();
+    char trash0[20], trash1[20], trash2[20], trash3[20];
+    int horas[3], diaSemana[3], minutos[3], dia[3], mes[3], ano[3]; 
+    double diasUntil[3];
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    horas[0] = tm.tm_hour;
+    diaSemana[0] = tm.tm_wday;
+    minutos[0] = tm.tm_min;
+    dia[0] = tm.tm_mday; 
+    mes[0] = tm.tm_mon + 1;
+    ano[0] = tm.tm_year + 1900;
 
-    return 0;
+    FILE *fd = fopen("data.txt", "r+");
+
+    fscanf(fd, "%s %s %d %d %d %d %d %d %s %s %d %d %d %d %d %d", trash0, trash1, &dia[1], &mes[1], &ano[1], &diaSemana[1], &horas[1], &minutos[1], trash2, trash3, &dia[2], &mes[2], &ano[2], &diaSemana[2], &horas[2], &minutos[2]);
+
+    if (dia[1]=(-1))
+    {
+        diasUntil[1]=diaSemana[1]-diaSemana[0];
+        if diaSemana[4]<0
+        {
+            diasUntil[1]=diasUntil[1]+7;
+        }
+        diasUntil[1]=diasUntil[1]*1440;
+    }
+    else
+    {
+        if (ano[1] < ano[0] || (ano[1] == ano[0] && mes[1] < mes[0]) || (ano[1] == ano[0] && mes[1] == mes[0] && dia[1] < dia[0]))
+        {
+            removes(1);
+        }
+        else if (ano[1]==ano[0] && mes[1]==mes[0])
+        {
+            diasUntil[1]=dia[1]-dia[0];
+        }
+        else if (ano[1]==ano[0] && add[1]==add[0])
+        {
+            diasUntil[1] = (mes[1]-mes[0])*(30.5)*1440;
+        }
+        else if (mes[1] == mes[0] && add[1] == add[0])
+        {
+            diasUntil[1] = (ano[1] - ano[0]) * (365.25) * 1440;
+        }
+        else if (ano[1] == ano[0])
+        {
+            diasUntil[1] = (mes[1] - mes[0]) * (30.5) * 1440;
+        }
+    }
+
+    fclose(fd);
 }

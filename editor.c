@@ -22,6 +22,29 @@ struct dadosUtilizador event;
 // Para usar, por exemplo a variável diaSemana, tem de se representar por stu_data.diaSemana
 // Para usar a variável dia, tem de se representar por stu_data.clg_data.dia
 
+int contaEventos ()
+{
+    int line = 1;
+    char c=' ';
+    FILE *ficheiro = fopen("data.txt", "r");
+
+    while (c != EOF)
+    {
+        c = getc(ficheiro);
+        if (c != EOF)
+        {
+            if (c == '\n')
+            {
+                line++;
+            }
+        }
+    }
+    line = (line/8);
+    fclose(ficheiro);
+
+    return line;
+}
+
 int mostra(void)
 {
     int line = 1;
@@ -178,9 +201,9 @@ int mostra(void)
 void recolha(void)
 {
     FILE *ficheiro = fopen("data.txt", "a");
-    int i, t;
+    int i, t, j, h, m;
     i = 1;
-    
+    j = 1;
 
     while (i == 1)
     {
@@ -204,8 +227,19 @@ void recolha(void)
         stu_data.clg_data.mes = (-1);
         stu_data.clg_data.ano = (-1);
         }
-        printf("Insira a que horas o evento vai ocorrer: ");
-        scanf("%d:%d", &stu_data.horas, &stu_data.minutos);
+        while (j==1)
+        {
+            printf("Insira a que horas o evento vai ocorrer: ");
+            scanf("%d:%d", &h, &m);
+            if (h>=0 && h<=23 && m>=0 && m<=59)
+            {
+                stu_data.horas=h;
+                stu_data.minutos=m;
+                j=0;
+            }
+            
+        }
+        
         fprintf(ficheiro, "%s\n%s\n%d\n%d\n%d\n%d\n%d\n%d\n", stu_data.nome, stu_data.link, stu_data.clg_data.dia, stu_data.clg_data.mes, stu_data.clg_data.ano, stu_data.diaSemana, stu_data.horas, stu_data.minutos);
         printf("\nCaso deseje adicionar outro evento insira [1], ou [0] caso contrário: ");
         scanf("%d", &i);
@@ -341,6 +375,7 @@ void removes (int del_line,int mode)
 
 void load_menu(void)
 {
+    char try;
     int menu = 1;
     int del;
     while (menu != 0)
@@ -383,18 +418,30 @@ void load_menu(void)
         //Edição de Eventos
         case 3:
         {
+            int line;
+            line = contaEventos();
             mostra();
             printf("\n\nQual evento a editar?\n");
             scanf("%d", &del);
+            if (del<0 || del > line) {
+                printf("O evento inserido não é válido!\n");
+                break;
+            }
             removes(del, 2);
             break;
         }
         //Apagar Eventos
         case 4:
         {
+            int line;
+            line = contaEventos();
             mostra();
             printf("\n\nQual evento a apagar?\n");
             scanf("%d", &del);
+            if (del<0 || del > line) {
+                printf("O evento inserido não é válido!\n");
+                break;
+            }
             removes(del, 1);
             break;
         }
@@ -421,6 +468,5 @@ int main()
     load_menu();
     return 0;
 }
-
 
 

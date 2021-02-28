@@ -59,6 +59,27 @@ void removes(int del_line)
     rename("copy.txt", "data.txt");
 }
 
+void contaEventos ()
+{
+    int line = 1;
+    char c=' ';
+    FILE *ficheiro = fopen("data.txt", "r");
+
+    while (c != EOF)
+    {
+        c = getc(ficheiro);
+        if (c != EOF)
+        {
+            if (c == '\n')
+            {
+                line++;
+            }
+        }
+    }
+    line = (line/8);
+    fclose(ficheiro);
+}
+
 int main(void)
 {
     
