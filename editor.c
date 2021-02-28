@@ -29,7 +29,7 @@ void import(void)
     int aux=1;
     char c;
     char fich[50];
-    printf("Para consultar a estrutura que o ficheiro deve ter, visite o menu AJUDA.");
+    printf("Para consultar a estrutura que o ficheiro deve ter, visite o menu AJUDA.\n");
     printf("Por favor copie o ficheiro para a pasta do programa e, de seguida, introduza o nome do arquivo (nome.txt):\n");
     scanf("%s", fich);
     f1 = fopen(fich, "r+");
