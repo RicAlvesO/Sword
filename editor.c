@@ -645,7 +645,7 @@ void supordenar(void)
     f2 = fopen("copya.txt", "w");
     fclose(f2);
     n=contaEventos();
-    for(i=1;i<n;i++)
+    for(i=0;i<n;i++)
     {
         m=contaEventos();
         for (j=1;j<m;j++)
@@ -654,22 +654,8 @@ void supordenar(void)
         }
         f1 = fopen("data.txt", "r");
         f2 = fopen("copya.txt", "a");
-        c = ' ';
-        while (c != EOF)
-        {
-            c = getc(f1);
-            if (c != EOF)
-            {
-                if ( aux < 9)
-                {
-                    putc(c, f2);
-                }
-                if (c == '\n')
-                {
-                    aux++;
-                }
-            }
-        }
+        ler();
+        fprintf(f2, "%s\n%s\n%d\n%d\n%d\n%d\n%d\n%d\n", event.nome, event.link, event.clg_data.dia, event.clg_data.mes, event.clg_data.ano, event.diaSemana, event.horas, event.minutos);
         fclose(f1);
         fclose(f2);
         removes(1, 1);
@@ -712,6 +698,7 @@ void load_menu(void)
         //Visualização de Eventos
         case 1:
         {
+            supordenar();
             mostra();
             break;
         }

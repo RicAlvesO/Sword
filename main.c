@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
 #include <string.h>
@@ -19,7 +20,7 @@ struct dadosUtilizador {
 }stu_data;
 
 struct dadosUtilizador nextEvent;
-char browser[] = "firefox ";
+char browser[20] = "firefox ";
 
 void ler(void)
 {
@@ -59,27 +60,6 @@ void removes(int del_line)
     rename("copy.txt", "data.txt");
 }
 
-void contaEventos ()
-{
-    int line = 1;
-    char c=' ';
-    FILE *ficheiro = fopen("data.txt", "r");
-
-    while (c != EOF)
-    {
-        c = getc(ficheiro);
-        if (c != EOF)
-        {
-            if (c == '\n')
-            {
-                line++;
-            }
-        }
-    }
-    line = (line/8);
-    fclose(ficheiro);
-}
-
 int main(void)
 {
     
@@ -107,6 +87,7 @@ int main(void)
         }
 
         sleep(60);
+        ler();
     }
     return 0;
 }
