@@ -20,9 +20,6 @@ struct dadosUtilizador {
 
 struct dadosUtilizador event;
 
-// Para usar, por exemplo a variável diaSemana, tem de se representar por stu_data.diaSemana
-// Para usar a variável dia, tem de se representar por stu_data.clg_data.dia
-
 void import(void)
 {
     FILE *f1, *f2;
@@ -232,7 +229,6 @@ int mostra(void)
     return 0;
 }
 
-//recolha das informações
 void recolha(void)
 {
     FILE *ficheiro = fopen("data.txt", "a");
@@ -361,8 +357,8 @@ void edit(void)
                  while (z==1)
                  {
                       printf("Insira a nova data do evento (\"dd/mm/aaaa\"): ");
-                      scanf("%d/%d/%d", &stu_data.clg_data.dia, &stu_data.clg_data.mes, &stu_data.clg_data.ano);
-                      if (stu_data.clg_data.mes<1||stu_data.clg_data.mes>12||stu_data.clg_data.dia<1||stu_data.clg_data.dia>31)
+                      scanf("%d/%d/%d", &event.clg_data.dia, &event.clg_data.mes, &event.clg_data.ano);
+                      if (event.clg_data.mes<1||event.clg_data.mes>12||event.clg_data.dia<1||event.clg_data.dia>31)
                       {
                           printf("\nPor favor introduza uma data válida.\n");
                       }
@@ -396,8 +392,8 @@ void edit(void)
                  scanf("%d:%d", &h, &m);
                  if (h>=0 && h<=23 && m>=0 && m<=59)
                  {
-                     stu_data.horas=h;
-                     stu_data.minutos=m;
+                     event.horas=h;
+                     event.minutos=m;
                      j=0;
                  }
             
