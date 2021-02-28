@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <time.h>
 
 struct dataExec {
     int dia;
@@ -221,8 +222,13 @@ void recolha(void)
         }
         else
         {
-        printf("Insira dia da semana em que o evento vai ocorrer: ");
+        printf("Insira dia da semana em que o evento vai ocorrer(0 a 6, sendo 0 domingo e 6 sábado): ");
         scanf("%d", &stu_data.diaSemana);
+        if (stu_data.diaSemana<0 || stu_data.diaSemana>6)
+        {
+            printf("Dia de semana inválido\n");
+            break;
+        }
         stu_data.clg_data.dia = (-1);
         stu_data.clg_data.mes = (-1);
         stu_data.clg_data.ano = (-1);
@@ -267,7 +273,8 @@ void ler2(void)
 void edit(void)
 {
     int editarEv = 1; 
-    int aEd, t;
+    int aEd, t, h, m, j;
+    j=1;
     ler2();
     FILE *ficheiro; 
     while (editarEv!=0)
@@ -304,6 +311,11 @@ void edit(void)
             {
                 printf("Insira o novo dia da semana em que o evento vai ocorrer: \n");
                 scanf("%d", &event.diaSemana);
+                if (event.diaSemana<0 || event.diaSemana>6)
+                 {
+                    printf("Dia de semana inválido\n");
+                    break;
+                 }
                 event.clg_data.dia = (-1);
                 event.clg_data.mes = (-1);
                 event.clg_data.ano = (-1);
@@ -312,10 +324,18 @@ void edit(void)
         }
         case 4:
         {
-            printf("Insira as novas horas a que o evento vai ocorrer: \n");
-            scanf("%d", &event.horas);
-            printf("Insira os minutos a que o evento vai ocorrer: \n");
-            scanf("%d", &event.minutos);
+            while (j==1)
+            {
+                 printf("Insira a que horas o evento vai ocorrer: ");
+                 scanf("%d:%d", &h, &m);
+                 if (h>=0 && h<=23 && m>=0 && m<=59)
+                 {
+                     stu_data.horas=h;
+                     stu_data.minutos=m;
+                     j=0;
+                 }
+            
+        }
             break;
         }
         default:
@@ -330,6 +350,15 @@ void edit(void)
         fprintf(ficheiro, "%s\n%s\n%d\n%d\n%d\n%d\n%d\n%d\n", event.nome, event.link, event.clg_data.dia, event.clg_data.mes, event.clg_data.ano, event.diaSemana, event.horas, event.minutos);
         fclose(ficheiro);
     }
+}
+
+void move(void)
+{
+    ler2();
+    FILE *ficheiro;
+    ficheiro = fopen("copy.txt", "a");
+    fprintf(ficheiro, "%s\n%s\n%d\n%d\n%d\n%d\n%d\n%d\n", event.nome, event.link, event.clg_data.dia, event.clg_data.mes, event.clg_data.ano, event.diaSemana, event.horas, event.minutos);
+    fclose(ficheiro);
 }
 
 void removes (int del_line,int mode)
@@ -367,10 +396,286 @@ void removes (int del_line,int mode)
     if (mode==2)
     {
         edit();
+    }else if (mode==3)
+    {
+        move();
     }
     remove("data.txt");
     remove("editar.txt");
     rename("copy.txt","data.txt");
+}
+
+void ordenar(void)
+{
+    char trash0[50], trash1[50], trash2[50], trash3[50];
+    int horas[3], diaSemana[3], minutos[3], dia[3], mes[3], ano[3];
+    double diasUntil[3], difHoras[3], difMin[3];
+    int eliminado = 0;
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    horas[0] = tm.tm_hour;
+    diaSemana[0] = tm.tm_wday;
+    minutos[0] = tm.tm_min;
+    dia[0] = tm.tm_mday;
+    mes[0] = tm.tm_mon + 1;
+    ano[0] = tm.tm_year + 1900;
+
+    FILE *fd = fopen("data.txt", "r+");
+
+    fscanf(fd, "%s %s %d %d %d %d %d %d %s %s %d %d %d %d %d %d", trash0, trash1, &dia[1], &mes[1], &ano[1], &diaSemana[1], &horas[1], &minutos[1], trash2, trash3, &dia[2], &mes[2], &ano[2], &diaSemana[2], &horas[2], &minutos[2]);
+
+    if (dia[1] == (-1))
+    {
+        diasUntil[1] = diaSemana[1] - diaSemana[0];
+        if (diasUntil[1] < 0)
+        {
+            diasUntil[1] = diasUntil[1] + 7;
+        }
+        diasUntil[1] = diasUntil[1] * 1440;
+    }
+    else
+    {
+        if (ano[1] < ano[0] || (ano[1] == ano[0] && mes[1] < mes[0]) || (ano[1] == ano[0] && mes[1] == mes[0] && dia[1] < dia[0]))
+        {
+            removes(1,1);
+            eliminado = 1;
+        }
+        else if (ano[1] == ano[0] && mes[1] == mes[0])
+        {
+            diasUntil[1] = dia[1] - dia[0];
+        }
+        else if (ano[1] == ano[0] && dia[1] == dia[0])
+        {
+            diasUntil[1] = (mes[1] - mes[0]) * (30.5) * 1440;
+        }
+        else if (mes[1] == mes[0] && dia[1] == dia[0])
+        {
+            diasUntil[1] = (ano[1] - ano[0]) * (365.25) * 1440;
+        }
+        else if (ano[1] == ano[0])
+        {
+            diasUntil[1] = ((mes[1] - mes[0]) * (30.5) * 1440) + ((30.5 - dia[1]) * 1440);
+        }
+        else if (mes[1] == mes[0])
+        {
+            diasUntil[1] = ((ano[1] - ano[0]) * 365.25 * 1440) + ((dia[1] - dia[0]) * 1440);
+        }
+        else if (dia[1] == dia[0])
+        {
+            diasUntil[1] = ((12 - mes[1]) * (30.5) * 1440) + ((ano[1] - ano[0]) * 365.25 * 1440);
+        }
+        else
+        {
+            diasUntil[1] = ((12 - mes[1]) * (30.5) * 1440) + ((ano[1] - ano[0]) * 365.25 * 1440) + ((30.5 - dia[1]) * 1440);
+        }
+    }
+
+    if (eliminado != 1)
+    {
+        difHoras[1] = horas[1] - horas[0];
+        difMin[1] = minutos[1] - minutos[0];
+        if (difHoras[1] < 0)
+        {
+            difHoras[1] = difHoras[1];
+        }
+        if (difMin[1] < 0)
+        {
+            difMin[1] = difMin[1];
+        }
+        diasUntil[1] = diasUntil[1] + (difHoras[1] * 60) + difMin[1];
+    }
+
+    if (dia[2] == (-1))
+    {
+        diasUntil[2] = diaSemana[2] - diaSemana[0];
+        if (diasUntil[2] < 0)
+        {
+            diasUntil[2] = diasUntil[2] + 7;
+        }
+        diasUntil[2] = diasUntil[2] * 1440;
+    }
+    else
+    {
+        if (ano[2] < ano[0] || (ano[2] == ano[0] && mes[2] < mes[0]) || (ano[2] == ano[0] && mes[2] == mes[0] && dia[2] < dia[0]))
+        {
+            removes(2,1);
+            if (eliminado == 1)
+            {
+                eliminado = 3;
+            }
+            else
+            {
+                eliminado = 2;
+            }
+        }
+        else if (ano[2] == ano[0] && mes[2] == mes[0])
+        {
+            diasUntil[2] = dia[2] - dia[0];
+        }
+        else if (ano[2] == ano[0] && dia[2] == dia[0])
+        {
+            diasUntil[2] = (mes[2] - mes[0]) * (30.5) * 1440;
+        }
+        else if (mes[2] == mes[0] && dia[2] == dia[0])
+        {
+            diasUntil[2] = (ano[2] - ano[0]) * (365.25) * 1440;
+        }
+        else if (ano[2] == ano[0])
+        {
+            diasUntil[2] = ((mes[2] - mes[0]) * (30.5) * 1440) + ((30.5 - dia[2]) * 1440);
+        }
+        else if (mes[2] == mes[0])
+        {
+            diasUntil[2] = ((ano[2] - ano[0]) * 365.25 * 1440) + ((dia[2] - dia[0]) * 1440);
+        }
+        else if (dia[2] == dia[0])
+        {
+            diasUntil[2] = ((12 - mes[2]) * (30.5) * 1440) + ((ano[2] - ano[0]) * 365.25 * 1440);
+        }
+        else
+        {
+            diasUntil[2] = ((12 - mes[2]) * (30.5) * 1440) + ((ano[2] - ano[0]) * 365.25 * 1440) + ((30.5 - dia[2]) * 1440);
+        }
+    }
+
+    if (eliminado < 2)
+    {
+        difHoras[2] = horas[2] - horas[0];
+        difMin[2] = minutos[2] - minutos[0];
+        if (difHoras[2] < 0)
+        {
+            difHoras[2] = difHoras[2];
+        }
+        if (difMin[2] < 0)
+        {
+            difMin[2] = difMin[2];
+        }
+        diasUntil[2] = diasUntil[2] + (difHoras[2] * 60) + difMin[2];
+    }
+
+    if(eliminado==0)
+    {
+        diasUntil[0] = diasUntil[1] - diasUntil[2];
+        if (diasUntil[0] <= 0)
+        {
+            removes(2, 3);
+        }
+        else
+        {
+            removes(1,3);
+        }
+    }
+
+    fclose(fd);
+}
+
+void ajuda(void)
+{
+    printf("______________________________________________________________________________________________________________________________________\n\n\n");
+    printf("\n   //\\\\\\\\\\\\\\\\\\\\\\\\  \\\\\\\\\\\\\\\\                 ///////  |||||||||||||||  ||||||||||||\\\\     |||||||||\\\\\\\\  \n");
+    printf("  ||           ||   \\\\    \\\\   ////\\\\\\\\    //   //   ||           ||  ||           ||    ||          \\\\                   \n");
+    printf("   \\\\    ||||||//    \\\\    \\\\  //     \\\\  //   //    ||  |||||||  ||  ||  ||||||   ||    ||           \\\\                  \n"); 
+    printf("    \\\\     \\\\         \\\\    \\\\//       \\\\//   //     ||  ||   ||  ||  ||  ||  ||   ||    ||  ||||||   ||                  \n");
+    printf("     \\\\      \\\\        \\\\        //\\\\        //      ||  ||   ||  ||  ||  ||||||  //     ||  ||  ||   ||                    \n");
+    printf("       \\\\     \\\\        \\\\      //  \\\\      //       ||  ||   ||  ||  ||          \\\\     ||  ||||||   ||                  \n");
+    printf("  //|||||||    ||        \\\\    //    \\\\    //        ||  |||||||  ||  ||  |||| \\\\  \\\\    ||           //                    \n");
+    printf("  ||           ||         \\\\  //      \\\\  //         ||           ||  ||  ||    \\\\  \\\\   ||          //                     \n");
+    printf("   \\\\\\\\\\\\\\\\\\\\////          \\\\//        \\\\//          |||||||||||||||  ||||||     \\\\\\\\\\\\  ||///////////         \n\n");  
+    
+    printf("\n\n");
+    
+    //VISUALIZAR UM EVENTO
+    printf("______________________________________________________________________________________________________________________________________\n\n");
+    printf("<1> Visualizar um Evento \n");
+    printf("______________________________________________________________________________________________________________________________________\n\n");
+    
+    printf("» Sempre que pretenda visualizar os seus eventos atuais terá que selecionar o número '1' no menu principal e pressionar 'ENTER'.\n");
+    printf("Assim ser-lhe-á disponibilizado a lista de todos os eventos, ordenados desde a data mais próxima a ocorrer para a data mais distante.\n");
+    
+    //CRIAR UM EVENTO
+    printf("_______________________________________________________________________________________________________________________________________\n\n");
+    printf("<2> Criar um Evento \n");
+    printf("_______________________________________________________________________________________________________________________________________\n\n");
+    
+    printf("» Sempre que pretenda criar eventos terá que selecionar o número '2' no menu principal e pressionar 'ENTER'. \n");
+    printf(" Será necessario escrever o nome do evento que quer guardar, o link através do qual pretende aceder ao evento, \n");
+    printf("se o evento será recursivo ou não, ou seja, se pretende que o evento ocorra sempre num dado dia da semana,\n");
+    printf("ou se pretende que o evento ocorra numa determinada data: \n\n");
+    // caso em que o evento seja recursivo.
+    printf("\t> se o evento que pretende usar for recursivo deve introduzir o valor '1'e de seguida será pedido o dia da semana\n");
+    printf("\t em que o evento irá ocorrer e a hora a que este vai começar.Assim o evento irá acontecer todas as semanas\n"); 
+    printf("\t na hora determinada.\n\n");
+    //caso em que o evento não seja recursivo.
+    printf("\t> se o evento que pretende usar não for recursivo deve introduuzir o valor '0' e de seguida será pedido para introduzir\n");
+    printf("\t a data em que o evento irá ocorrer e a respetiva hora. Assim o evento irá ocorrer na data dada, na hora determinada\n");
+    printf("\t pelo utilizador.\n\n");
+    //final do processo
+    printf("» No final do processo ser-lhe-á disponibilizada a opção de criar outro evento ou simplesmente para de criar eventos\n");
+    printf("e voltar ao menu principal, neste caso, tal como nos outros acima referidos, devera introduzir o numero '1' se a sua\n"); 
+    printf("resposta corresponder a'sim' ou '0' caso a sua resposta corresponder a 'não'.\n");
+    
+     
+    //EDITAR UM EVENTO
+    printf("_________________________________________________________________________________________________________________________________________\n\n");
+    printf("<3> Editar um Evento \n");
+    printf("_________________________________________________________________________________________________________________________________________\n\n");
+    printf("» Sempre que pretenda editar eventos terá que selecionar o número '3' no menu principal e pressionar 'ENTER'. \n");
+    printf(" Ser-lhe-á fornecido uma lista com todos os eventos criados até à data (cada um tem um número associado), de seguida terá\n");
+    printf("que selecionar o número do evento que pretende editar. Em segudia será questionado sobre qual a parte do evento que\n");
+    printf("pertende alterar (nome, link, a recursividade de um evento, a data, o dia da seman, a hora).\n");
+    
+    //APAGAR UM EVENTO
+    printf("_________________________________________________________________________________________________________________________________________\n\n");
+    printf("<4> Apagar um Evento \n");
+    printf("_________________________________________________________________________________________________________________________________________\n\n");
+    printf("» Sempre que pretenda apagar um evento terá que selecionar o número '4' no menu principal e pressionar 'ENTER'.\n");
+    printf(" Ser-lhe-á fornecido uma lista com todos os eventos criados até à data (cada um tem um número associado), de seguida\n");
+    printf("será pedido para o utilizador introduzir o número correspondente ao evento que pretende eliminar, e assim que o evento\n");
+    printf("for eliminado o utilizador volta para o menu principal.\n\n");
+    printf("_________________________________________________________________________________________________________________________________________\n\n");
+
+}
+
+void supordenar(void)
+{
+    FILE *f1, *f2;
+    int m, n, i, j;
+    int aux = 1;
+    char c;
+    f2 = fopen("copya.txt", "w");
+    fclose(f2);
+    n=contaEventos();
+    for(i=1;i<n;i++)
+    {
+        m=contaEventos();
+        for (j=1;j<m;j++)
+        {
+            ordenar();
+        }
+        f1 = fopen("data.txt", "r");
+        f2 = fopen("copya.txt", "a");
+        c = ' ';
+        while (c != EOF)
+        {
+            c = getc(f1);
+            if (c != EOF)
+            {
+                if ( aux < 9)
+                {
+                    putc(c, f2);
+                }
+                if (c == '\n')
+                {
+                    aux++;
+                }
+            }
+        }
+        fclose(f1);
+        fclose(f2);
+        removes(1, 1);
+    }
+    remove("data.txt");
+    rename("copya.txt", "data.txt");
 }
 
 void load_menu(void)
@@ -390,6 +695,7 @@ void load_menu(void)
         printf("\\\\ 3. Editar Evento      //\n");
         printf("\\\\ 4. Apagar Evento      //\n");
         printf("\\\\ 5. Exit               //\n");
+        printf("\\\\ 6. Ajuda              //\n");
         printf("\\\\                       //\n");
         printf("\\\\          oOOo         //\n");
         printf("\\\\         c~~~~ɔ        //\n");
@@ -448,8 +754,15 @@ void load_menu(void)
         //Exit
         case 5:
         {
+            supordenar();
             printf("\n\nBye bye\n");
             menu = 0;
+            break;
+        }
+        //Ajuda
+        case 6:
+        {
+            ajuda();
             break;
         }
         // Caso o valor dado seja Invalido
