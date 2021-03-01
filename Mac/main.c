@@ -20,7 +20,7 @@ struct dadosUtilizador {
 }stu_data;
 
 struct dadosUtilizador nextEvent;
-char browser[20] = "firefox ";
+char browser[20] = "open ";
 
 void ler(void)
 {
@@ -28,6 +28,29 @@ void ler(void)
     fscanf(f, "%[^\n]\n%[^\n]\n%i\n%i\n%i\n%i\n%i\n%i\n", nextEvent.nome, nextEvent.link, &nextEvent.clg_data.dia,
            &nextEvent.clg_data.mes, &nextEvent.clg_data.ano, &nextEvent.diaSemana, &nextEvent.horas, &nextEvent.minutos) == 8;
     fclose(f);
+}
+
+int contaEventos()
+{
+    int line = 1;
+    char c = ' ';
+    FILE *ficheiro = fopen("data.txt", "r");
+
+    while (c != EOF)
+    {
+        c = getc(ficheiro);
+        if (c != EOF)
+        {
+            if (c == '\n')
+            {
+                line++;
+            }
+        }
+    }
+    line = (line / 8);
+    fclose(ficheiro);
+
+    return line;
 }
 
 void removes(int del_line)
@@ -63,7 +86,7 @@ void removes(int del_line)
 int main(void)
 {
     
-    int loop = 1;
+    int i, eve, loop = 1;
     ler();
     while (loop == 1) //Loop principal
     {
@@ -71,15 +94,30 @@ int main(void)
         FILE *ficheiro;
         time_t t = time(NULL);
         struct tm tm = *localtime(&t);
-        if (tm.tm_hour == nextEvent.horas && tm.tm_min == nextEvent.minutos && (tm.tm_wday == nextEvent.diaSemana || (tm.tm_mday == nextEvent.clg_data.dia && (tm.tm_mon+1) == nextEvent.clg_data.mes && (tm.tm_year + 1900) == nextEvent.clg_data.ano)))
+        eve=contaEventos();
+        for (i=0; i<eve; i++)
+        {
+            if ((tm.tm_wday == nextEvent.diaSemana || (tm.tm_mday == nextEvent.clg_data.dia && (tm.tm_mon + 1) == nextEvent.clg_data.mes && (tm.tm_year + 1900) == nextEvent.clg_data.ano)) && tm.tm_hour > nextEvent.horas || tm.tm_hour == nextEvent.horas && tm.tm_min > nextEvent.minutos)
+            {
+                removes(1);
+                if (nextEvent.diaSemana == tm.tm_wday)
+                {
+                    ficheiro = fopen("data.txt", "a");
+                    fprintf(ficheiro, "%s\n%s\n%d\n%d\n%d\n%d\n%d\n%d\n", nextEvent.nome, nextEvent.link, nextEvent.clg_data.dia, nextEvent.clg_data.mes, nextEvent.clg_data.ano, nextEvent.diaSemana, nextEvent.horas, nextEvent.minutos);
+                    fclose(ficheiro);
+                }
+                ler();
+            }
+        }
+        if (tm.tm_hour == nextEvent.horas && tm.tm_min == nextEvent.minutos && (tm.tm_wday == nextEvent.diaSemana || (tm.tm_mday == nextEvent.clg_data.dia && (tm.tm_mon + 1) == nextEvent.clg_data.mes && (tm.tm_year + 1900) == nextEvent.clg_data.ano)))
         {
             strcat(browser, nextEvent.link);
             system(browser);
-            strcpy(browser,"firefox  ");
+            strcpy(browser, "open ");
             removes(1);
             if (nextEvent.diaSemana == tm.tm_wday)
             {
-                ficheiro = fopen("data.txt","a");
+                ficheiro = fopen("data.txt", "a");
                 fprintf(ficheiro, "%s\n%s\n%d\n%d\n%d\n%d\n%d\n%d\n", nextEvent.nome, nextEvent.link, nextEvent.clg_data.dia, nextEvent.clg_data.mes, nextEvent.clg_data.ano, nextEvent.diaSemana, nextEvent.horas, nextEvent.minutos);
                 fclose(ficheiro);
             }
@@ -88,6 +126,7 @@ int main(void)
 
         sleep(60);
         ler();
+        i=0;
     }
     return 0;
 }

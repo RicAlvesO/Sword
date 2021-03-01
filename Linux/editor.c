@@ -43,11 +43,6 @@ void import(void)
                 aux++;
             }
         }
-        else
-        {
-            putc('\n',f2);
-            putc(' ', f2);
-        }
     }
     fclose(f1);
     fclose(f2);
@@ -231,15 +226,16 @@ int mostra(void)
 
 void recolha(void)
 {
-    FILE *ficheiro = fopen("data.txt", "a");
+    FILE *ficheiro;
     int i, t, j, h, m, z;
     i = 1;
-    j = 1;
-    t = 3;
-    z = 1;
 
     while (i == 1)
     {
+        j = 1;
+        t = 3;
+        z = 1;
+        ficheiro = fopen("data.txt", "a");
         printf("\nInsira o nome do evento (não use espaços neste campo): ");
         scanf("%s", stu_data.nome);
         printf("Insira o link do evento: ");
@@ -298,10 +294,10 @@ void recolha(void)
         }
         
         fprintf(ficheiro, "%s\n%s\n%d\n%d\n%d\n%d\n%d\n%d\n", stu_data.nome, stu_data.link, stu_data.clg_data.dia, stu_data.clg_data.mes, stu_data.clg_data.ano, stu_data.diaSemana, stu_data.horas, stu_data.minutos);
+        fclose(ficheiro);
         printf("\nCaso deseje adicionar outro evento insira [1], ou [0] caso contrário: ");
         scanf("%d", &i);
     }
-    fclose(ficheiro);
 }
 
 void ler(void)
@@ -328,9 +324,9 @@ void edit(void)
     z=1;
     ler2();
     FILE *ficheiro; 
+    ficheiro = fopen("copy.txt", "a");
     while (editarEv!=0)
     {
-        ficheiro = fopen("copy.txt", "a");
         aEd = 0;
         printf("\nO que pretende editar:\n1.Nome\n2.Link\n3.Data\n4.Horas\n");
         scanf("%d", &aEd);
@@ -409,9 +405,9 @@ void edit(void)
         
         printf("Caso deseje editar mais algum argumento do evento escreva [1], ou [0] caso contrário.\n");
         scanf("%d", &editarEv);
-        fprintf(ficheiro, "%s\n%s\n%d\n%d\n%d\n%d\n%d\n%d\n", event.nome, event.link, event.clg_data.dia, event.clg_data.mes, event.clg_data.ano, event.diaSemana, event.horas, event.minutos);
-        fclose(ficheiro);
     }
+    fprintf(ficheiro, "%s\n%s\n%d\n%d\n%d\n%d\n%d\n%d\n", event.nome, event.link, event.clg_data.dia, event.clg_data.mes, event.clg_data.ano, event.diaSemana, event.horas, event.minutos);
+    fclose(ficheiro);
 }
 
 void move(void)
@@ -819,16 +815,22 @@ void load_menu(void)
         //Apagar Eventos
         case 4:
         {
-            int line;
-            line = contaEventos();
-            mostra();
-            printf("\n\nQual evento a apagar?\n");
-            scanf("%d", &del);
-            if (del<0 || del > line) {
-                printf("O evento inserido não é válido!\n");
-                break;
+            int line, apagar=1;
+            while (apagar == 1)
+            {
+                line = contaEventos();
+                mostra();
+                printf("\n\nQual evento a apagar?\n");
+                scanf("%d", &del);
+                if (del < 0 || del > line)
+                {
+                    printf("O evento inserido não é válido!\n");
+                    break;
+                }
+                removes(del, 1);
+                printf ("\nDesja apagar mais algum evento?\n[1]Sim\n[0]Nao\n");
+                scanf("%d", &apagar);
             }
-            removes(del, 1);
             break;
         }
         //Importar
