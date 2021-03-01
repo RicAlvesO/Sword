@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <unistd.h>
 #include <string.h>
+#include <windows.h>
 
 struct dataExec {
     int dia;
@@ -26,7 +26,7 @@ void ler(void)
 {
     FILE *f = fopen("data.txt", "r+");
     fscanf(f, "%[^\n]\n%[^\n]\n%i\n%i\n%i\n%i\n%i\n%i\n", nextEvent.nome, nextEvent.link, &nextEvent.clg_data.dia,
-           &nextEvent.clg_data.mes, &nextEvent.clg_data.ano, &nextEvent.diaSemana, &nextEvent.horas, &nextEvent.minutos) == 8;
+           &nextEvent.clg_data.mes, &nextEvent.clg_data.ano, &nextEvent.diaSemana, &nextEvent.horas, &nextEvent.minutos);
     fclose(f);
 }
 
@@ -123,8 +123,7 @@ int main(void)
             }
             ler();
         }
-
-        sleep(60);
+		Sleep(60000);
         ler();
         i=0;
     }

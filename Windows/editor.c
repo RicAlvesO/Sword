@@ -304,7 +304,7 @@ void ler(void)
 {
     FILE *f = fopen("data.txt", "r+");
     fscanf(f, "%[^\n]\n%[^\n]\n%i\n%i\n%i\n%i\n%i\n%i\n", event.nome, event.link, &event.clg_data.dia,
-           &event.clg_data.mes, &event.clg_data.ano, &event.diaSemana, &event.horas, &event.minutos) == 8;
+           &event.clg_data.mes, &event.clg_data.ano, &event.diaSemana, &event.horas, &event.minutos);
     fclose(f);
 }
 
@@ -312,7 +312,7 @@ void ler2(void)
 {
     FILE *f = fopen("editar.txt", "r+");
     fscanf(f, "%[^\n]\n%[^\n]\n%i\n%i\n%i\n%i\n%i\n%i\n", event.nome, event.link, &event.clg_data.dia,
-           &event.clg_data.mes, &event.clg_data.ano, &event.diaSemana, &event.horas, &event.minutos) == 8;
+           &event.clg_data.mes, &event.clg_data.ano, &event.diaSemana, &event.horas, &event.minutos);
     fclose(f);
 }
 
@@ -767,7 +767,7 @@ void load_menu(void)
         printf("\\\\ 7. Ajuda              //\n");
         printf("\\\\                       //\n");
         printf("\\\\          oOOo         //\n");
-        printf("\\\\         c~~~~ɔ        //\n");
+        printf("\\\\         o~~~~o        //\n");
         printf("\\\\         \\\\\\///        //\n");
         printf("\\\\          ----         //\n");
         printf("\\\\                       //\n");
