@@ -20,7 +20,7 @@ struct dadosUtilizador {
 }stu_data;
 
 struct dadosUtilizador nextEvent;
-char browser[20] = "xdg-open ";
+char browser[20] = "firefox ";
 
 void ler(void)
 {
@@ -113,7 +113,7 @@ int main(void)
         {
             strcat(browser, nextEvent.link);
             system(browser);
-            strcpy(browser, "xdg-open ");
+            strcpy(browser, "firefox ");
             removes(1);
             if (nextEvent.diaSemana == tm.tm_wday)
             {
