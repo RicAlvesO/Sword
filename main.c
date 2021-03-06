@@ -22,7 +22,7 @@ struct dadosUtilizador
 } stu_data;
 
 struct dadosUtilizador nextEvent;
-char browser[20] = "firefox ";
+char browser[100] = "firefox ";
 
 void ler(void)
 {

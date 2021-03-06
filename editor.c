@@ -466,7 +466,7 @@ void removes(int del_line, int mode)
 
 void ordenar(void)
 {
-    char trash0[50], trash1[50], trash2[50], trash3[50];
+    char trash0[300], trash1[300], trash2[300], trash3[300];
     int horas[3], diaSemana[3], minutos[3], dia[3], mes[3], ano[3];
     double diasUntil[3], difHoras[3], difMin[3];
     int eliminado = 0;
